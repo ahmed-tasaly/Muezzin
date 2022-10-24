@@ -757,6 +757,9 @@ function loadLanguage(lang){
   document.getElementById("jumuahText").innerHTML  = window.api.getLanguage(lang, "jumuahTime"); 
   document.getElementById("jumuahCheckText").innerHTML  = window.api.getLanguage(lang, "enableJumuahTime"); 
   document.getElementById("jumuahInputText").innerHTML  = window.api.getLanguage(lang, "jumuah"); 
+
+  document.getElementById("hijriAdjTitle").innerHTML  = window.api.getLanguage(lang, "hijriAdjTitle");
+  document.getElementById("hijriAdjText").innerHTML  = window.api.getLanguage(lang, "hijriAdjText");
 }
 
 
@@ -841,6 +844,7 @@ async function saveCustomSettings(){
 //Loads the prayer times adjustements from the store and adds an event listener for the adjustements check box
 async function loadAdjustments(){
   var adjustements = await window.api.getFromStore('adj', [false, 0,0,0,0,0]);
+  var hijriAdj = await window.api.getFromStore('hijriAdj', 0);
   for (let i = 1; i <= 5; i++){
     if (adjustements[i] == undefined){
       adjustements[i] = 0;
@@ -859,12 +863,17 @@ async function loadAdjustments(){
     enableAdjustements(document.getElementById("adjCheck").checked)
   })
 
+  loadHijriAdj()
+
   function enableAdjustements(boolean){
     document.getElementById("fajrAdjInput").disabled = !boolean;
     document.getElementById("dhuhrAdjInput").disabled = !boolean;
     document.getElementById("asrAdjInput").disabled = !boolean;
     document.getElementById("maghribAdjInput").disabled = !boolean;
     document.getElementById("ishaAdjInput").disabled = !boolean;
+  }
+  function loadHijriAdj(){
+    document.getElementById("hijriAdjInput").value = hijriAdj
   }
 }
 
@@ -877,10 +886,12 @@ async function saveAdjustments(){
   var asrAdj = document.getElementById("asrAdjInput").value;
   var maghribrAdj = document.getElementById("maghribAdjInput").value;
   var ishaAdj = document.getElementById("ishaAdjInput").value;
+  var hijriAdjFinal = document.getElementById("hijriAdjInput").value
 
   var adjustements = [adjCheck, Math.round(fajrAdj),Math.round(dhuhrAdj),Math.round(asrAdj),Math.round(maghribrAdj),Math.round(ishaAdj)]
   
   await window.api.setToStore('adj', adjustements);
+  await window.api.setToStore('hijriAdj', Math.round(hijriAdjFinal));
 }
 
 
